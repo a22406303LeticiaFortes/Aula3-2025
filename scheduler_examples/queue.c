@@ -15,7 +15,34 @@ pcb_t *new_pcb(pid_t pid, uint32_t sockfd, uint32_t time_ms) {
     new_task->ellapsed_time_ms = 0;
     return new_task;
 }
+pcb_t* dequeue_shortest_pcb(queue_t* q) {
+    if (!q || !q->head) return NULL;
 
+    queue_elem_t * prev = NULL, *shortest_prev = NULL;
+    queue_elem_t *curr = q->head;
+    queue_elem_t *shortest = curr;
+
+    //percorre ate encontrar o pcb com menos tempo
+    while (curr!= NULL) {
+        if (curr->pcb->time_ms > shortest->pcb->time_ms) {
+            shortest = curr;
+            shortest_prev = curr;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+    //remove o shortest
+    if (shortest_prev == NULL) {
+        q->head = shortest ->next; //primeiro
+    }else {
+        shortest_prev->next = shortest ->next;
+    }
+    if (q->tail == shortest) {
+        q->tail = shortest_prev;
+    }
+    shortest->next = NULL;
+    return shortest;
+}
 int enqueue_pcb(queue_t* q, pcb_t* task) {
     queue_elem_t* elem = malloc(sizeof(queue_elem_t));
     if (!elem) return 0;
