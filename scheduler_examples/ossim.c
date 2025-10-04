@@ -15,9 +15,9 @@
 #include "fifo.h"
 #include "sjf.h"
 #include "rr.h"
+
 #include "msg.h"
 #include "queue.h"
-
 
 static uint32_t PID = 0;
 
@@ -237,7 +237,8 @@ static const char *SCHEDULER_NAMES[] = {
     "FIFO",
     "SJF",
     "RR",
-    "MLFQ",
+  /*  "MLFQ",
+*/
     NULL
 };
 
@@ -316,7 +317,6 @@ int main(int argc, char *argv[]) {
             case SCHED_RR:
                 rr_scheduler(current_time_ms, &ready_queue, &CPU);
                 break;
-
             default:
                 printf("Unknown scheduler type\n");
                 break;
