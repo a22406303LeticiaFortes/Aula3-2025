@@ -15,34 +15,7 @@ pcb_t *new_pcb(pid_t pid, uint32_t sockfd, uint32_t time_ms) {
     new_task->ellapsed_time_ms = 0;
     return new_task;
 }
-pcb_t* dequeue_shortest_pcb(queue_t* q) {
-    if (!q || !q->head) return NULL;
 
-    queue_elem_t * prev = NULL, *shortest_prev = NULL;
-    queue_elem_t *curr = q->head;
-    queue_elem_t *shortest = curr;
-
-    //percorre ate encontrar o pcb com menos tempo
-    while (curr!= NULL) {
-        if (curr->pcb->time_ms > shortest->pcb->time_ms) {
-            shortest = curr;
-            shortest_prev = curr;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
-    //remove o shortest
-    if (shortest_prev == NULL) {
-        q->head = shortest ->next; //primeiro
-    }else {
-        shortest_prev->next = shortest ->next;
-    }
-    if (q->tail == shortest) {
-        q->tail = shortest_prev;
-    }
-    shortest->next = NULL;
-    return shortest;
-}
 int enqueue_pcb(queue_t* q, pcb_t* task) {
     queue_elem_t* elem = malloc(sizeof(queue_elem_t));
     if (!elem) return 0;
@@ -71,6 +44,39 @@ pcb_t* dequeue_pcb(queue_t* q) {
 
     free(node);
     return task;
+}
+pcb_t* dequeue_shortest_pcb(queue_t* q) {
+    if (!q || !q->head) return NULL;
+
+    queue_elem_t *prev = NULL;
+    queue_elem_t *shortest_prev = NULL;
+    queue_elem_t *curr = q->head;
+    queue_elem_t *shortest = curr;
+
+    // percorre até encontrar o pcb com menos tempo
+    while (curr != NULL) {
+        if (curr->pcb->time_ms < shortest->pcb->time_ms) {
+            shortest = curr;
+            shortest_prev = prev;   // guarda o nó ANTERIOR
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // remove o shortest da lista
+    if (shortest_prev == NULL) {
+        // era o primeiro da lista
+        q->head = shortest->next;
+    } else {
+        shortest_prev->next = shortest->next;
+    }
+
+    if (q->tail == shortest) {
+        q->tail = shortest_prev;
+    }
+
+    shortest->next = NULL;
+    return shortest->pcb; // devolve o PCB, não o elemento
 }
 
 queue_elem_t *remove_queue_elem(queue_t* q, queue_elem_t* elem) {

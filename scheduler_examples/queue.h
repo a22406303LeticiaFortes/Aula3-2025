@@ -2,7 +2,6 @@
 #define QUEUE_H
 #include <stdint.h>
 
-
 typedef enum  {
     TASK_COMMAND = 0,   // Task has connected and is waiting for instructions
     TASK_BLOCKED,       // Task is blocked (waiting/IO wait)
@@ -68,7 +67,6 @@ int enqueue_pcb(queue_t* q, pcb_t* task);
  * @return The pcb at the front of the queue, or NULL if the queue is empty
  */
 pcb_t* dequeue_pcb(queue_t* q);
-pcb_t* dequeue_shortest_pcb(queue_t* q);
 
 /**
  * @brief Remove a specific element from the queue
@@ -82,5 +80,6 @@ pcb_t* dequeue_shortest_pcb(queue_t* q);
  */
 queue_elem_t *remove_queue_elem(queue_t* q, queue_elem_t* elem);
 
+pcb_t* dequeue_shortest_pcb(queue_t* q);
 
 #endif //QUEUE_H
